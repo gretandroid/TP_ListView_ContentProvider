@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteMisuseException;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -44,8 +45,31 @@ public class MyContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+    public Cursor query(@NonNull Uri uri, @Nullable String[] columns, @Nullable String selection, @Nullable String[] arguments, @Nullable String sort) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        switch(sURIMatcher.match(uri)){
+            case PERSON:
+                return  db.query(ContractDB.Person.TABLE_NAME,
+                        columns,
+                        selection,
+                        arguments,
+                        null,
+                        null,
+                        sort);
+
+            case PERSON_ID:
+                return  db.query(ContractDB.Person.TABLE_NAME,
+                        columns,
+                        ContractDB.Person.COL_ID + " = " + uri.getLastPathSegment(),
+                        null,
+                        null,
+                        null,
+                        sort);
+            default:
+                throw new IllegalArgumentException("failed query uri not match: " + uri);
+        }
+
     }
 
     @Nullable
@@ -58,24 +82,47 @@ public class MyContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try {
+            switch (sURIMatcher.match(uri)) {
+                case PERSON:
+                    long id = db.insertOrThrow(ContractDB.Person.TABLE_NAME, null, contentValues);
 
-        switch(sURIMatcher.match(uri)){
-            case PERSON:
-                long id = db.insertOrThrow(ContractDB.Person.TABLE_NAME, null, contentValues);
-
-                return ContentUris.withAppendedId(uri, id);
-            default:
-                throw new IllegalArgumentException("Failed insertion, uri not march: " + uri);
+                    return ContentUris.withAppendedId(uri, id);
+                default:
+                    throw new IllegalArgumentException("Failed insertion, uri not march: " + uri);
+            }
+        }finally {
+            db.close();
         }
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try{
+            switch(sURIMatcher.match(uri)){
+                case PERSON_ID:
+                    return db.delete(ContractDB.Person.TABLE_NAME, ContractDB.Person.COL_ID + " = " + uri.getLastPathSegment(), null);
+                default:
+                    throw new IllegalArgumentException("Failed insertion, uri not march: " + uri);
+            }
+        }finally {
+            db.close();
+        }
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try{
+            switch(sURIMatcher.match(uri)){
+                case PERSON_ID:
+                    return db.update(ContractDB.Person.TABLE_NAME, contentValues, ContractDB.Person.COL_ID + " = " + uri.getLastPathSegment(), null);
+                default:
+                    throw new IllegalArgumentException("Failed insertion, uri not march: " + uri);
+            }
+        }finally {
+            db.close();
+        }
     }
 }

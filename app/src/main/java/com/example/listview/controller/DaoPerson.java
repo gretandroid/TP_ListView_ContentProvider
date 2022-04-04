@@ -16,8 +16,24 @@ import java.util.ArrayList;
 public class DaoPerson {
 
     @SuppressLint("Range")
-    public static ArrayList<Person> getPersonsFromDB() {
-        return null;
+    public static ArrayList<Person> getPersonsFromDB(Context context) {
+        ArrayList<Person> persons = new ArrayList<>();
+        try(Cursor cursor = context.getContentResolver().query(ContractDB.Person.CONTENT_URI,
+                null,
+                null,
+                null,
+                null,
+                null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int id = cursor.getInt(cursor.getColumnIndex(ContractDB.Person.COL_ID));
+                    String name = cursor.getString(cursor.getColumnIndex(ContractDB.Person.COL_NAME));
+                    String firstName = cursor.getString(cursor.getColumnIndex(ContractDB.Person.COL_FIRSTNAME));
+                    persons.add(new Person(id, name, firstName));
+                } while (cursor.moveToNext());
+            }
+        }
+        return persons;
     }
 
 
@@ -30,12 +46,20 @@ public class DaoPerson {
         person.setId(Integer.parseInt(retour.getLastPathSegment()));
     }
 
-    public static void editPerson(){
-
+    public static void editPerson(Context context, int id, Person person){
+        ContentValues values = new ContentValues();
+        values.put(ContractDB.Person.COL_NAME, person.getName());
+        values.put(ContractDB.Person.COL_FIRSTNAME, person.getFirstName());
+        context.getContentResolver().update(ContentUris.withAppendedId(ContractDB.Person.CONTENT_URI, id),
+                values,
+                null,
+                null);
 
     }
-    public static void removePerson(){
-
+    public static void removePerson(Context context, int id){
+        context.getContentResolver().delete(ContentUris.withAppendedId(ContractDB.Person.CONTENT_URI, id),
+                null,
+                null);
     }
 
     private static boolean checkEmptyValue(Person person){
@@ -44,7 +68,7 @@ public class DaoPerson {
 
         return true;
     }
-    
+
 
 
 

@@ -28,10 +28,10 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
         listView = findViewById(R.id.listView);
         Intent intent = getIntent();
-        ArrayList<Person> personsList = (ArrayList<Person>) intent.getSerializableExtra(MainActivity.PERSONSLIST);
+        //ArrayList<Person> personsList = (ArrayList<Person>) intent.getSerializableExtra(MainActivity.PERSONSLIST);
 
         //On instancie l'arrayAdapter
-        ArrayList<Person> _persons = new ArrayList<>();
+        ArrayList<Person> _persons = DaoPerson.getPersonsFromDB(getBaseContext());
         personArrayAdapter = new ArrayAdapter<Person>(this, android.R.layout.simple_list_item_1, _persons);
         listView.setAdapter(personArrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
