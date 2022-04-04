@@ -15,12 +15,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.listview.controller.DaoPerson;
-import com.example.listview.database.ContractDB;
 import com.example.listview.model.Person;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     EditText eName, eFirstName;
     TextView tSelectedPerson;
+    Button btnSave;
 
     //on déclare un lanceur pour un appel préalablement préparé (l'intent) pour démarer le processus d'exécution d'un ActivityResultContract
     ActivityResultLauncher<Intent> intentActivityResultLauncher;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         eName = findViewById(R.id.eName);
         eFirstName = findViewById(R.id.eFirstName);
-
+        btnSave = findViewById(R.id.btnSave);
         tSelectedPerson = findViewById(R.id.tSelectedPerson);
         selectedPerson = null;
 
@@ -60,12 +61,14 @@ public class MainActivity extends AppCompatActivity {
                     eFirstName.setText(selectedPerson.getFirstName());
 
                     tSelectedPerson.setText("Une personne selectionné:\n"+selectedPerson.toString());
+                    //btnSave.setEnabled(false);
 
                 }else{
                     selectedPerson = null;
                     tSelectedPerson.setText("");
                     eName.setText("");
                     eFirstName.setText("");
+                    //btnSave.setEnabled(true);
                 }
             }
         }
@@ -78,10 +81,8 @@ public class MainActivity extends AppCompatActivity {
     public void saveOnClick(View view) {
         String name = eName.getText().toString().trim();
         String firstName = eFirstName.getText().toString().trim();
-        DaoPerson.addPerson(this, new Person(name, firstName));
-        selectedPerson = null;
-        tSelectedPerson.setText("");
-        Toast.makeText(getBaseContext(), "Personne enregistré avec succès", Toast.LENGTH_LONG).show();
+        DaoPerson.addPerson();
+
 
 
     }
@@ -103,12 +104,13 @@ public class MainActivity extends AppCompatActivity {
         String name = eName.getText().toString();
         String firstName = eFirstName.getText().toString();
 
-        DaoPerson.editPerson(this, selectedPerson, new Person(name, firstName));
+        DaoPerson.editPerson();
 
-        selectedPerson.setName(name);
-        selectedPerson.setFirstName(firstName);
-        Toast.makeText(getBaseContext(), "Personne modifié avec succès", Toast.LENGTH_LONG).show();
-        tSelectedPerson.setText("Une personne modifié:\nid = "+ selectedPerson.getId()+" name = "+selectedPerson.getName() + " firstName = " + selectedPerson.getFirstName());
+//        selectedPerson.setName(name);
+//        selectedPerson.setFirstName(firstName);
+//        Toast.makeText(getBaseContext(), "Personne modifié avec succès", Toast.LENGTH_LONG).show();
+//        tSelectedPerson.setText("Une personne modifié:\nid = "+ selectedPerson.getId()+" name = "+selectedPerson.getName() + " firstName = " + selectedPerson.getFirstName());
+//        //btnSave.setEnabled(true);
     }
 
     public void deleteOnClick(View view) {
@@ -116,12 +118,16 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Aucune personne sélectioné", Toast.LENGTH_LONG).show();
             return;
         }
-        DaoPerson.removePerson(this, selectedPerson);
-        selectedPerson = null;
-        tSelectedPerson.setText("");
-        eName.setText("");
-        eFirstName.setText("");
-        Toast.makeText(getBaseContext(), "Personne supprimé avec succès", Toast.LENGTH_LONG).show();
+        DaoPerson.removePerson();
+
+
+
+
+//        selectedPerson = null;
+//        tSelectedPerson.setText("");
+//        eName.setText("");
+//        eFirstName.setText("");
+//        Toast.makeText(getBaseContext(), "Personne supprimé avec succès", Toast.LENGTH_LONG).show();
 
     }
 

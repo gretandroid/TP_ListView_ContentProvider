@@ -31,7 +31,7 @@ public class SecondActivity extends AppCompatActivity {
         ArrayList<Person> personsList = (ArrayList<Person>) intent.getSerializableExtra(MainActivity.PERSONSLIST);
 
         //On instancie l'arrayAdapter
-        ArrayList<Person> _persons = DaoPerson.getPersonsFromDB(this);
+        ArrayList<Person> _persons = new ArrayList<>();
         personArrayAdapter = new ArrayAdapter<Person>(this, android.R.layout.simple_list_item_1, _persons);
         listView.setAdapter(personArrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

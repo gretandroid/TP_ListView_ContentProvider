@@ -21,10 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider
-            android:authorities="com.example.listview.database.MyContentProvider"
-            android:name=".database.MyContentProvider"
-            android:exported="true" />
+
     </application>
 
 </manifest>
