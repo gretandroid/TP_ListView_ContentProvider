@@ -76,15 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    @SuppressLint("Range")
     public void saveOnClick(View view) {
         String name = eName.getText().toString().trim();
         String firstName = eFirstName.getText().toString().trim();
-        DaoPerson.addPerson();
-
-
-
+        Person newPerson = new Person(name, firstName);
+        DaoPerson.addPerson(this, newPerson);
+        Toast.makeText(this, "Personne enregistré avec succès: " + newPerson, Toast.LENGTH_LONG).show();
     }
 
     public void showOnClick(View view) {

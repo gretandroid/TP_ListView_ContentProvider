@@ -15,7 +15,6 @@ public class Person implements Serializable {
 
         this.name = name;
         this.firstName = firstName;
-        //this.id = ++idCount;
     }
     public Person(int id, String name, String firstName){
         this.id = id;
